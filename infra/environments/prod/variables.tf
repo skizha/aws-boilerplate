@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "project" {
   type    = string
-  default = "getmytrip"
+  default = "myapp"
 }
 
 variable "environment" {

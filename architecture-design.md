@@ -1,4 +1,4 @@
-# GetMyTrip — Architecture Design Document
+# Architecture Design Document — Architecture Design Document
 
 **Version:** 2.0
 **Date:** 2026-04-24
@@ -31,7 +31,7 @@
 
 ## 1. Overview
 
-GetMyTrip is a travel marketplace platform connecting travelers and travel agencies. Travelers post trip requests; agencies submit competitive bids. The platform operates across web and mobile with a real-time bidding experience driven by WebSocket subscriptions.
+The platform is a travel marketplace platform connecting travelers and travel agencies. Travelers post trip requests; agencies submit competitive bids. The platform operates across web and mobile with a real-time bidding experience driven by WebSocket subscriptions.
 
 The architecture is **fully managed-AWS**, prioritising operational simplicity, zero cold starts for user-facing APIs, and global edge delivery to meet the sub-1-second load target.
 
@@ -51,7 +51,7 @@ The architecture is **fully managed-AWS**, prioritising operational simplicity, 
 
 ## 3. Architecture Diagram
 
-> The full interactive diagram is available in [`getmytrip-architecture.excalidraw`](./getmytrip-architecture.excalidraw).
+> The full interactive diagram is available in [`architecture.excalidraw`](./architecture.excalidraw).
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -72,7 +72,7 @@ The architecture is **fully managed-AWS**, prioritising operational simplicity, 
   ┌─────────┴──────────┐
   ▼                    ▼
 ┌──────────────────────────────┐  ┌───────────────────────┐
-│  AWS ALB (Ingress)           │  │  S3: getmytrip-web    │
+│  AWS ALB (Ingress)           │  │  S3: web-assets bucket  │
 │  AWS Load Balancer Controller│  │  Static assets (JS,   │
 │  (routes via K8s Ingress)    │  │  CSS, images) served  │
 └──────────────┬───────────────┘  │  via CloudFront        │
@@ -82,7 +82,7 @@ The architecture is **fully managed-AWS**, prioritising operational simplicity, 
 ┌──────────────────────────────────────────────────────────────┐
 │  AMAZON EKS CLUSTER  (managed control plane + node groups)   │
 │                                                              │
-│  Namespace: getmytrip                                        │
+│  Namespace: myapp                                        │
 │  ┌──────────────────────────────────────────────────────┐   │
 │  │  Deployments (minReplicas=2, HPA enabled)            │   │
 │  │  next-web       request-svc    bid-svc               │   │
@@ -217,7 +217,7 @@ Amazon EKS provides a managed Kubernetes control plane. AWS manages the control 
 **Ingress routing (via AWS Load Balancer Controller):**
 
 ```
-ALB Ingress (getmytrip.com)
+ALB Ingress (the platform.com)
   /api/requests/*   → request-service (ClusterIP)
   /api/bids/*       → bid-service     (ClusterIP)
   /api/agencies/*   → agency-service  (ClusterIP)
@@ -306,9 +306,9 @@ Lambda is used exclusively for background jobs where latency is irrelevant and p
 
 | Bucket | Contents | Access |
 |---|---|---|
-| `getmytrip-documents` | Agency registration documents | Private; pre-signed URLs for admin |
-| `getmytrip-media` | Profile photos, trip images | Public via CloudFront |
-| `getmytrip-web` | Next.js static build output | Public via CloudFront |
+| `{project}-documents` | Agency registration documents | Private; pre-signed URLs for admin |
+| `{project}-media` | Profile photos, trip images | Public via CloudFront |
+| `{project}-web` | Next.js static build output | Public via CloudFront |
 
 #### Search — Amazon OpenSearch Service
 
@@ -477,4 +477,4 @@ GitHub Actions requests short-lived AWS token via OIDC
 
 ---
 
-*Architecture Design Document — GetMyTrip v2.0 — Compute: EKS*
+*Architecture Design Document — v2.0 — Compute: EKS*

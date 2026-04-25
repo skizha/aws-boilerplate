@@ -96,8 +96,8 @@ module "cognito" {
   project     = var.project
   environment = var.environment
 
-  callback_urls = ["https://getmytrip.com/api/auth/callback/cognito"]
-  logout_urls   = ["https://getmytrip.com"]
+  callback_urls = ["https://example.com/api/auth/callback/cognito"]
+  logout_urls   = ["https://example.com"]
 
   tags = local.common_tags
 }

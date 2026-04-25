@@ -1,8 +1,8 @@
-# GetMyTrip — AWS Infrastructure Boilerplate
+# AWS Infrastructure Boilerplate — AWS Infrastructure Boilerplate
 
-Terraform IaC for the GetMyTrip travel marketplace platform. Targets a brand-new AWS account. All compute runs on Amazon EKS; supporting services are fully managed AWS.
+Terraform IaC boilerplate for a travel marketplace platform. Targets a brand-new AWS account. All compute runs on Amazon EKS; supporting services are fully managed AWS.
 
-Architecture spec: [`getmytrip-architecture-design.md`](./getmytrip-architecture-design.md)  
+Architecture spec: [`architecture-design.md`](./architecture-design.md)  
 Build progress: [`PROGRESS.md`](./PROGRESS.md)
 
 ---
@@ -68,9 +68,9 @@ terraform apply \
 
 Note the outputs:
 ```
-tfstate_bucket         = "getmytrip-tfstate-123456789012"
+tfstate_bucket         = "myapp-tfstate-123456789012"
 github_actions_role_arns = {
-  dev     = "arn:aws:iam::123456789012:role/getmytrip-github-actions-dev"
+  dev     = "arn:aws:iam::123456789012:role/myapp-github-actions-dev"
   staging = "arn:aws:iam::..."
   prod    = "arn:aws:iam::..."
 }
@@ -103,7 +103,7 @@ terraform apply
 
 Connect to the cluster after apply:
 ```bash
-aws eks update-kubeconfig --name getmytrip-dev --region us-east-1
+aws eks update-kubeconfig --name myapp-dev --region us-east-1
 kubectl get nodes
 ```
 

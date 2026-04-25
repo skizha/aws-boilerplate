@@ -1,4 +1,4 @@
-# GetMyTrip — Build Progress
+# Build Progress
 
 **Last updated:** 2026-04-24  
 **Active branch:** main
@@ -7,14 +7,14 @@
 
 ## What this project is
 
-Terraform IaC boilerplate for GetMyTrip — a travel marketplace platform (travelers post requests, agencies bid). Targets AWS, EKS-based compute, fully managed supporting services. Architecture spec is in [`getmytrip-architecture-design.md`](./getmytrip-architecture-design.md).
+Terraform IaC boilerplate for the platform — a travel marketplace platform (travelers post requests, agencies bid). Targets AWS, EKS-based compute, fully managed supporting services. Architecture spec is in [`architecture-design.md`](./architecture-design.md).
 
 ---
 
 ## Completed
 
 ### Architecture Design (v2.0)
-- [x] Full architecture document written — `getmytrip-architecture-design.md`
+- [x] Full architecture document written — `architecture-design.md`
 - [x] Migrated compute from AWS App Runner → Amazon EKS (v2.0 update)
 - [x] EKS architecture decisions documented: Karpenter, AWS LBC, IRSA, HPA, Fluent Bit
 

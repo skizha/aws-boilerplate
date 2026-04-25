@@ -6,12 +6,12 @@ variable "allowed_security_group_ids" { type = list(string) }
 
 variable "db_name" {
   type    = string
-  default = "getmytrip"
+  default = "myapp"
 }
 
 variable "db_username" {
   type    = string
-  default = "getmytrip_admin"
+  default = "myapp_admin"
 }
 
 variable "postgres_version" {
