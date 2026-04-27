@@ -31,6 +31,14 @@ output "web_cloudfront_domain" {
   value = module.storage.web_cloudfront_domain
 }
 
+output "next_web_ecr_repository_url" {
+  value = aws_ecr_repository.next_web.repository_url
+}
+
+output "next_web_alb_hostname" {
+  value = try(kubernetes_ingress_v1.next_web.status[0].load_balancer[0].ingress[0].hostname, null)
+}
+
 output "app_irsa_role_arns" {
   value = module.eks.app_irsa_role_arns
 }

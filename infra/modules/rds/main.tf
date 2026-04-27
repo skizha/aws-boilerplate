@@ -74,11 +74,11 @@ module "rds" {
   db_subnet_group_name   = aws_db_subnet_group.this.name
   vpc_security_group_ids = [aws_security_group.rds.id]
 
-  maintenance_window      = "Mon:00:00-Mon:03:00"
-  backup_window           = "03:00-06:00"
-  backup_retention_period = var.environment == "prod" ? 30 : 7
-  deletion_protection     = var.environment == "prod"
-  skip_final_snapshot     = var.environment != "prod"
+  maintenance_window               = "Mon:00:00-Mon:03:00"
+  backup_window                    = "03:00-06:00"
+  backup_retention_period          = var.environment == "prod" ? 30 : 7
+  deletion_protection              = var.environment == "prod"
+  skip_final_snapshot              = var.environment != "prod"
   final_snapshot_identifier_prefix = "${var.project}-${var.environment}"
 
   performance_insights_enabled          = true
@@ -92,7 +92,7 @@ module "rds" {
 
 resource "aws_security_group" "rds_proxy" {
   name        = "${var.project}-${var.environment}-rds-proxy"
-  description = "RDS Proxy — accepts from EKS, forwards to RDS"
+  description = "RDS Proxy accepts from EKS and forwards to RDS"
   vpc_id      = var.vpc_id
 
   ingress {

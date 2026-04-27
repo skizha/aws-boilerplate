@@ -13,6 +13,21 @@ variable "system_node_instance_types" {
   default = ["m5.large"]
 }
 
+variable "system_node_min_size" {
+  type    = number
+  default = 2
+}
+
+variable "system_node_max_size" {
+  type    = number
+  default = 4
+}
+
+variable "system_node_desired_size" {
+  type    = number
+  default = 2
+}
+
 variable "app_service_accounts" {
   description = "Map of service-account name → IAM policy ARNs for IRSA"
   type = map(object({

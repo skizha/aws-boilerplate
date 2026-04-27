@@ -21,7 +21,7 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   cluster_addons = {
-    coredns = { most_recent = true }
+    coredns    = { most_recent = true }
     kube-proxy = { most_recent = true }
     vpc-cni = {
       most_recent    = true
@@ -40,11 +40,15 @@ module "eks" {
       name           = "system"
       instance_types = var.system_node_instance_types
       capacity_type  = "ON_DEMAND"
-      min_size       = 2
-      max_size       = 4
-      desired_size   = 2
+      min_size       = var.system_node_min_size
+      max_size       = var.system_node_max_size
+      desired_size   = var.system_node_desired_size
 
       labels = { role = "system" }
+
+      iam_role_additional_policies = {
+        CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      }
 
       taints = [{
         key    = "CriticalAddonsOnly"
@@ -71,8 +75,11 @@ module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "~> 20.0"
 
-  cluster_name          = module.eks.cluster_name
-  enable_v1_permissions = true
+  cluster_name           = module.eks.cluster_name
+  enable_v1_permissions  = true
+  enable_irsa            = true
+  irsa_oidc_provider_arn = module.eks.oidc_provider_arn
+  queue_name             = module.eks.cluster_name
 
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"

@@ -41,7 +41,7 @@ resource "helm_release" "karpenter" {
   chart            = "karpenter"
   version          = var.karpenter_version
   wait             = true
-  timeout          = 300
+  timeout          = 900
 
   values = [yamlencode({
     settings = {
@@ -74,7 +74,10 @@ resource "kubectl_manifest" "karpenter_node_class" {
     metadata   = { name = "default" }
     spec = {
       amiFamily = "AL2023"
-      role       = var.karpenter_node_iam_role_name
+      amiSelectorTerms = [
+        { alias = "al2023@latest" }
+      ]
+      role = var.karpenter_node_iam_role_name
       subnetSelectorTerms = [
         { tags = { "karpenter.sh/discovery" = var.cluster_name } }
       ]
@@ -109,8 +112,8 @@ resource "kubectl_manifest" "karpenter_node_pool_spot" {
             name  = "default"
           }
           requirements = [
-            { key = "karpenter.sh/capacity-type",      operator = "In", values = ["spot", "on-demand"] }
-            { key = "kubernetes.io/arch",               operator = "In", values = ["amd64"] }
+            { key = "karpenter.sh/capacity-type", operator = "In", values = var.karpenter_capacity_types },
+            { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
             { key = "node.kubernetes.io/instance-type", operator = "In", values = var.karpenter_instance_types }
           ]
         }
@@ -134,6 +137,15 @@ resource "helm_release" "aws_lbc" {
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   version    = var.aws_lbc_version
+  wait       = true
+  timeout    = 900
+
+  values = [yamlencode({
+    tolerations = [{
+      key      = "CriticalAddonsOnly"
+      operator = "Exists"
+    }]
+  })]
 
   set {
     name  = "clusterName"
@@ -163,6 +175,15 @@ resource "helm_release" "metrics_server" {
   repository = "https://kubernetes-sigs.github.io/metrics-server/"
   chart      = "metrics-server"
   version    = var.metrics_server_version
+  wait       = true
+  timeout    = 900
+
+  values = [yamlencode({
+    tolerations = [{
+      key      = "CriticalAddonsOnly"
+      operator = "Exists"
+    }]
+  })]
 }
 
 # ── Fluent Bit → CloudWatch Container Insights ────────────────────────────────
@@ -174,13 +195,18 @@ resource "helm_release" "fluent_bit" {
   repository       = "https://aws.github.io/eks-charts"
   chart            = "aws-for-fluent-bit"
   version          = var.fluent_bit_version
+  wait             = true
+  timeout          = 900
 
   values = [yamlencode({
+    tolerations = [{
+      key      = "CriticalAddonsOnly"
+      operator = "Exists"
+    }]
     cloudWatch = {
-      enabled       = true
-      region        = var.aws_region
-      logGroupName  = "/aws/eks/${var.cluster_name}/application"
-      logStreamName = "$(kubernetes['pod_name'])"
+      enabled      = true
+      region       = var.aws_region
+      logGroupName = "/aws/eks/${var.cluster_name}/application"
     }
     firehose      = { enabled = false }
     kinesis       = { enabled = false }

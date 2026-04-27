@@ -30,6 +30,8 @@ Build progress: [`PROGRESS.md`](./PROGRESS.md)
 ## Repository layout
 
 ```
+apps/
+  next-web/               # Next.js web app containerized for EKS
 infra/
   bootstrap/              # Run once — creates S3 state, DynamoDB lock, GitHub OIDC
   modules/
@@ -105,6 +107,24 @@ Connect to the cluster after apply:
 ```bash
 aws eks update-kubeconfig --name myapp-dev --region us-east-1
 kubectl get nodes
+```
+
+Build and push the dev web image after the ECR repository is created:
+
+```bash
+cd apps/next-web
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
+docker build -t <next_web_ecr_repository_url>:latest .
+docker push <next_web_ecr_repository_url>:latest
+```
+
+Then re-apply dev, or restart the deployment if Terraform has already created
+it before the image was pushed:
+
+```bash
+cd infra/environments/dev
+terraform apply
+kubectl rollout restart deployment/next-web -n myapp
 ```
 
 ---

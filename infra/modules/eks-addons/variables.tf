@@ -19,6 +19,12 @@ variable "karpenter_instance_types" {
   default = ["m5.large", "m5.xlarge", "m5.2xlarge", "m6i.large", "m6i.xlarge"]
 }
 
+variable "karpenter_capacity_types" {
+  type        = list(string)
+  description = "Allowed Karpenter capacity types. Use on-demand until the EC2 Spot service-linked role exists in the account."
+  default     = ["spot", "on-demand"]
+}
+
 variable "aws_lbc_version" {
   type    = string
   default = "1.8.0"

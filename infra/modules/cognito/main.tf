@@ -4,6 +4,8 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_cognito_user_pool" "this" {
   name = "${var.project}-${var.environment}"
 
@@ -47,7 +49,7 @@ resource "aws_cognito_user_pool" "this" {
 }
 
 resource "aws_cognito_user_pool_domain" "this" {
-  domain       = "${var.project}-${var.environment}"
+  domain       = "${var.project}-${var.environment}-${data.aws_caller_identity.current.account_id}"
   user_pool_id = aws_cognito_user_pool.this.id
 }
 

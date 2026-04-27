@@ -70,6 +70,11 @@ resource "aws_dynamodb_table" "tfstate_lock" {
   }
 }
 
+# OpenSearch domains in a VPC require this account-level service-linked role.
+resource "aws_iam_service_linked_role" "opensearch" {
+  aws_service_name = "opensearchservice.amazonaws.com"
+}
+
 # ── GitHub Actions OIDC ───────────────────────────────────────────────────────
 
 data "tls_certificate" "github_actions" {

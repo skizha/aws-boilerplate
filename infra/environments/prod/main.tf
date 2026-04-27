@@ -14,7 +14,7 @@ module "networking" {
   availability_zones   = ["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"]
   private_subnet_cidrs = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
   public_subnet_cidrs  = ["10.2.101.0/24", "10.2.102.0/24", "10.2.103.0/24"]
-  single_nat_gateway   = false   # one NAT per AZ for HA
+  single_nat_gateway   = false # one NAT per AZ for HA
 
   tags = local.common_tags
 }
@@ -85,7 +85,7 @@ module "elasticache" {
   allowed_security_group_ids = [module.eks.node_security_group_id]
 
   node_type          = "cache.r6g.large"
-  num_cache_clusters = 3   # 1 primary + 2 replicas across AZs
+  num_cache_clusters = 3 # 1 primary + 2 replicas across AZs
 
   tags = local.common_tags
 }

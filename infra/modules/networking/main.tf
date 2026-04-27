@@ -25,14 +25,14 @@ module "vpc" {
 
   # Required for AWS Load Balancer Controller to discover subnets
   public_subnet_tags = {
-    "kubernetes.io/role/elb"                                    = "1"
-    "kubernetes.io/cluster/${var.project}-${var.environment}"   = "shared"
+    "kubernetes.io/role/elb"                                  = "1"
+    "kubernetes.io/cluster/${var.project}-${var.environment}" = "shared"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb"                           = "1"
-    "kubernetes.io/cluster/${var.project}-${var.environment}"   = "shared"
-    "karpenter.sh/discovery"                                    = "${var.project}-${var.environment}"
+    "kubernetes.io/role/internal-elb"                         = "1"
+    "kubernetes.io/cluster/${var.project}-${var.environment}" = "shared"
+    "karpenter.sh/discovery"                                  = "${var.project}-${var.environment}"
   }
 
   tags = var.tags

@@ -7,6 +7,25 @@ terraform {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+resource "aws_cloudwatch_log_resource_policy" "opensearch" {
+  policy_name = "${var.project}-${var.environment}-opensearch-logs"
+
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "es.amazonaws.com"
+      }
+      Action = [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ]
+      Resource = "${aws_cloudwatch_log_group.opensearch.arn}:*"
+    }]
+  })
+}
+
 resource "aws_security_group" "opensearch" {
   name        = "${var.project}-${var.environment}-opensearch"
   description = "OpenSearch inbound from EKS nodes"
@@ -27,9 +46,9 @@ resource "aws_opensearch_domain" "this" {
   engine_version = var.engine_version
 
   cluster_config {
-    instance_type            = var.instance_type
-    instance_count           = var.instance_count
-    zone_awareness_enabled   = var.instance_count > 1
+    instance_type          = var.instance_type
+    instance_count         = var.instance_count
+    zone_awareness_enabled = var.instance_count > 1
     dynamic "zone_awareness_config" {
       for_each = var.instance_count > 1 ? [1] : []
       content {
@@ -78,6 +97,8 @@ resource "aws_opensearch_domain" "this" {
   }
 
   tags = var.tags
+
+  depends_on = [aws_cloudwatch_log_resource_policy.opensearch]
 }
 
 resource "aws_cloudwatch_log_group" "opensearch" {
